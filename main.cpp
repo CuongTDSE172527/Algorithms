@@ -1,154 +1,190 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
+#include <vector>
 
-void swap(int* a, int* b) {
-    int t = *a;
-    *a = *b;
-    *b = t;
-}
-
-void bubbleSort(int arr[], int n) {
-    for (int i = 0; i < n-1; i++) {
-        for (int j = 0; j < n-i-1; j++) {
+// Bubble Sort
+void bubbleSort(std::vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n-1; ++i) {
+        for (int j = 0; j < n-i-1; ++j) {
             if (arr[j] > arr[j+1]) {
-                swap(&arr[j], &arr[j+1]);
+                std::swap(arr[j], arr[j+1]);
             }
         }
     }
 }
 
-void selectionSort(int arr[], int n) {
-    int min_idx;
-    for (int i = 0; i < n-1; i++) {
-        min_idx = i;
-        for (int j = i+1; j < n; j++) {
-            if (arr[j] < arr[min_idx])
+// Selection Sort
+void selectionSort(std::vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n-1; ++i) {
+        int min_idx = i;
+        for (int j = i+1; j < n; ++j) {
+            if (arr[j] < arr[min_idx]) {
                 min_idx = j;
+            }
         }
-        swap(&arr[min_idx], &arr[i]);
+        std::swap(arr[i], arr[min_idx]);
     }
 }
 
-void insertionSort(int arr[], int n) {
-    int key, j;
-    for (int i = 1; i < n; i++) {
-        key = arr[i];
-        j = i - 1;
-
+// Insertion Sort
+void insertionSort(std::vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 1; i < n; ++i) {
+        int key = arr[i];
+        int j = i - 1;
         while (j >= 0 && arr[j] > key) {
-            arr[j + 1] = arr[j];
-            j = j - 1;
+            arr[j+1] = arr[j];
+            --j;
         }
-        arr[j + 1] = key;
+        arr[j+1] = key;
     }
 }
 
-void merge(int arr[], int l, int m, int r) {
-    int i, j, k;
+// Merge Sort
+void merge(std::vector<int>& arr, int l, int m, int r) {
     int n1 = m - l + 1;
     int n2 = r - m;
 
-    int L[n1], R[n2];
+    std::vector<int> L(n1), R(n2);
 
-    for (i = 0; i < n1; i++)
+    for (int i = 0; i < n1; ++i)
         L[i] = arr[l + i];
-    for (j = 0; j < n2; j++)
+    for (int j = 0; j < n2; ++j)
         R[j] = arr[m + 1 + j];
 
-    i = 0;
-    j = 0;
-    k = l;
+    int i = 0, j = 0, k = l;
     while (i < n1 && j < n2) {
         if (L[i] <= R[j]) {
             arr[k] = L[i];
-            i++;
+            ++i;
         } else {
             arr[k] = R[j];
-            j++;
+            ++j;
         }
-        k++;
+        ++k;
     }
 
     while (i < n1) {
         arr[k] = L[i];
-        i++;
-        k++;
+        ++i;
+        ++k;
     }
 
     while (j < n2) {
         arr[k] = R[j];
-        j++;
-        k++;
+        ++j;
+        ++k;
     }
 }
 
-void mergeSort(int arr[], int l, int r) {
+void mergeSort(std::vector<int>& arr, int l, int r) {
     if (l < r) {
         int m = l + (r - l) / 2;
+
         mergeSort(arr, l, m);
         mergeSort(arr, m + 1, r);
+
         merge(arr, l, m, r);
     }
 }
 
-int partition(int arr[], int low, int high) {
+// Quick Sort
+int partition(std::vector<int>& arr, int low, int high) {
     int pivot = arr[high];
-    int i = (low - 1);
+    int i = low - 1;
 
-    for (int j = low; j <= high - 1; j++) {
+    for (int j = low; j < high; ++j) {
         if (arr[j] < pivot) {
-            i++;
-            swap(&arr[i], &arr[j]);
+            ++i;
+            std::swap(arr[i], arr[j]);
         }
     }
-    swap(&arr[i + 1], &arr[high]);
-    return (i + 1);
+    std::swap(arr[i + 1], arr[high]);
+    return i + 1;
 }
 
-void quickSort(int arr[], int low, int high) {
+void quickSort(std::vector<int>& arr, int low, int high) {
     if (low < high) {
         int pi = partition(arr, low, high);
+
         quickSort(arr, low, pi - 1);
         quickSort(arr, pi + 1, high);
     }
 }
 
-void printArray(int arr[], int size) {
-    for (int i = 0; i < size; i++)
-        printf("%d ", arr[i]);
-    printf("\n");
+// Heap Sort
+void heapify(std::vector<int>& arr, int n, int i) {
+    int largest = i;
+    int l = 2*i + 1;
+    int r = 2*i + 2;
+
+    if (l < n && arr[l] > arr[largest])
+        largest = l;
+
+    if (r < n && arr[r] > arr[largest])
+        largest = r;
+
+    if (largest != i) {
+        std::swap(arr[i], arr[largest]);
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(std::vector<int>& arr) {
+    int n = arr.size();
+
+    for (int i = n / 2 - 1; i >= 0; --i)
+        heapify(arr, n, i);
+
+    for (int i = n-1; i > 0; --i) {
+        std::swap(arr[0], arr[i]);
+        heapify(arr, i, 0);
+    }
+}
+
+// Utility function to print an array
+void printArray(const std::vector<int>& arr) {
+    for (int num : arr) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl;
 }
 
 int main() {
-    int arr[] = {5, 2, 9, 0, 3, 7, 1, 4, 8, 6};
-    int n = sizeof(arr) / sizeof(arr[0]);
+    std::vector<int> arr = {64, 25, 12, 22, 11};
+    std::cout << "Original Array: ";
+    printArray(arr);
 
-    printf("Original Array: ");
-    printArray(arr, n);
+    // Bubble Sort
+    bubbleSort(arr);
+    std::cout << "After Bubble Sort: ";
+    printArray(arr);
 
-    bubbleSort(arr, n);
-    printf("Sorted array using Bubble Sort: ");
-    printArray(arr, n);
+    // Selection Sort
+    selectionSort(arr);
+    std::cout << "After Selection Sort: ";
+    printArray(arr);
 
-    int arr2[] = {5, 2, 9, 0, 3, 7, 1, 4, 8, 6};
-    selectionSort(arr2, n);
-    printf("Sorted array using Selection Sort: ");
-    printArray(arr2, n);
+    // Insertion Sort
+    insertionSort(arr);
+    std::cout << "After Insertion Sort: ";
+    printArray(arr);
 
-    int arr3[] = {5, 2, 9, 0, 3, 7, 1, 4, 8, 6};
-    insertionSort(arr3, n);
-    printf("Sorted array using Insertion Sort: ");
-    printArray(arr3, n);
+    // Merge Sort
+    mergeSort(arr, 0, arr.size()-1);
+    std::cout << "After Merge Sort: ";
+    printArray(arr);
 
-    int arr4[] = {5, 2, 9, 0, 3, 7, 1, 4, 8, 6};
-    mergeSort(arr4, 0, n - 1);
-    printf("Sorted array using Merge Sort: ");
-    printArray(arr4, n);
+    // Quick Sort
+    quickSort(arr, 0, arr.size()-1);
+    std::cout << "After Quick Sort: ";
+    printArray(arr);
 
-    int arr5[] = {5, 2, 9, 0, 3, 7, 1, 4, 8, 6};
-    quickSort(arr5, 0, n - 1);
-    printf("Sorted array using Quick Sort: ");
-    printArray(arr5, n);
+    // Heap Sort
+    heapSort(arr);
+    std::cout << "After Heap Sort: ";
+    printArray(arr);
 
     return 0;
 }
