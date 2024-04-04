@@ -10,9 +10,6 @@ This project aims to provide a visual representation of common sorting algorithm
 - Merge Sort
 - Quick Sort
 - Heap Sort
-- Radix Sort (if implemented)
-- Shell Sort (if implemented)
-- Counting Sort (if implemented)
 
 ## Technologies Used
 
